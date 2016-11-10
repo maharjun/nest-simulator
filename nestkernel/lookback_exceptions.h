@@ -18,7 +18,7 @@ public:
   {
   }
 
-  ~InvalidSynapseReplacement()() throw()
+  ~InvalidSynapseReplacement() throw()
   {
   }
   std::string message();

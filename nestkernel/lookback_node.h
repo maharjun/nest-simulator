@@ -37,31 +37,34 @@
 #include <sstream>
 
 #include "exceptions.h"
-#include "connector_model_impl.h"
+#include "connector_model.h"
 #include "node.h"
 
 namespace nest
 {
 
-template <typename ConnectionT> class LookBackNode;
 template <typename ConnectionT> class LookBackConnectorModel;
 
 template <typename ConnectionT>
-class LookBackNode : Node {
+class LookBackNode {
 private:
     inline void add_inc_synapse(ConnectionT* new_syn);
     inline void replace_inc_synapse(ConnectionT* old_syn, ConnectionT* new_syn);
     std::set<ConnectionT*> incoming_syn_ptr_set;
 
+    // This function exists for the sole purpose of making this class a virtual class
+    // so that RTTI can be performed
+    virtual void DoNothingFunction() {}
 public:
     friend class LookBackConnectorModel<ConnectionT>;
 
     LookBackNode();
 
-    inline std::set<ConnectionT*>::const_iterator get_inc_syn_begin();
-    inline std::set<ConnectionT*>::const_iterator get_inc_syn_end();
+    typename std::set<ConnectionT*>::const_iterator get_inc_syn_begin();
+    typename std::set<ConnectionT*>::const_iterator get_inc_syn_end();
 }; // of LookBackNode
 
 
 } // of namespace
+
 #endif

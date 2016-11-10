@@ -14,13 +14,13 @@ public:
   LookBackConnectorModel( const std::string name,
                           bool is_primary,
                           bool has_delay )
-      : GenericConnectorModel( name, is_primary, has_delay )
+      : GenericConnectorModel<ConnectionT>( name, is_primary, has_delay )
   {
   }
 
   LookBackConnectorModel( const LookBackConnectorModel& cm,
                           const std::string name )
-      : GenericConnectorModel( cm, name )
+      : GenericConnectorModel<ConnectionT>( cm, name )
   {
   }
 

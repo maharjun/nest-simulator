@@ -7,18 +7,18 @@
 #include "lookback_exceptions.h"
 #include "target_identifier.h"
 
-#include "../models/stdp_connection.h"
 #include "connection.h"
+#include "connector_model_impl.h"
 
 namespace nest {
 
 template <typename ConnectionT>
-void LookBackNode::add_inc_synapse(ConnectionT *new_syn) {
+void LookBackNode<ConnectionT>::add_inc_synapse(ConnectionT *new_syn) {
     incoming_syn_ptr_set.insert(new_syn);
 }
 
 template <typename ConnectionT>
-void LookBackNode::replace_inc_synapse(ConnectionT *old_syn, ConnectionT *new_syn) {
+void LookBackNode<ConnectionT>::replace_inc_synapse(ConnectionT *old_syn, ConnectionT *new_syn) {
 
     auto old_syn_iter = incoming_syn_ptr_set.find(old_syn);
 
@@ -38,12 +38,12 @@ void LookBackNode::replace_inc_synapse(ConnectionT *old_syn, ConnectionT *new_sy
 }
 
 template <typename ConnectionT>
-std::set<ConnectionT*>::const_iterator LookBackNode::get_inc_syn_begin() {
+typename std::set<ConnectionT*>::const_iterator LookBackNode<ConnectionT>::get_inc_syn_begin() {
     return incoming_syn_ptr_set.begin();
 }
 
 template <typename ConnectionT>
-std::set<ConnectionT*>::const_iterator LookBackNode::get_inc_syn_end() {
+typename std::set<ConnectionT*>::const_iterator LookBackNode<ConnectionT>::get_inc_syn_end() {
     return incoming_syn_ptr_set.end();
 }
 
