@@ -2,6 +2,7 @@
 #define LOOKBACK_CONNECTOR_MODEL_H
 
 #include "connector_model.h"
+#include "lookback_node.h"
 
 #include <vector>
 
@@ -25,8 +26,11 @@ public:
   }
 
 private:
-  void get_conn_ptrs(ConnectorBase * conn_base_in, index synid, std::vector<ConnectionT*> &conn_ptrs_out);
-  void update_conn_ptrs(const std::vector<ConnectionT*> &old_conn_ptrs, const std::vector<ConnectionT*> &new_conn_ptrs);
+  inline bool is_matching_syn_id(ConnectorBase *conn_base_in, index syn_id);
+  inline std::vector<ConnectionT *> get_conn_ptrs_hom(ConnectorBase * conn_base_in);
+  inline std::vector<ConnectionT *> get_conn_ptrs_het(ConnectorBase * conn_base_in, index syn_id);
+  inline std::vector<ConnectionT *> get_conn_ptrs(ConnectorBase * conn_base_in, index synid);
+  inline void update_conn_ptrs(const std::vector<ConnectionT*> &old_conn_ptrs, const std::vector<ConnectionT*> &new_conn_ptrs);
   LookBackNode<ConnectionT>* get_validated_neuron(Node *node_in);
 
 public:
