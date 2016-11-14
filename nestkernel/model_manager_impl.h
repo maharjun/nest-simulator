@@ -94,6 +94,22 @@ ModelManager::register_connection_model( const std::string& name )
   }
 }
 
+template < class ConnectionT >
+void
+ModelManager::register_lookback_connection_model( const std::string& name )
+{
+  ConnectorModel* cf = new LookBackConnectorModel< ConnectionT >(
+      name, /*is_primary=*/true, /*has_delay=*/true );
+  register_connection_model_( cf );
+
+  if ( not ends_with( name, "_hpc" ) )
+  {
+    cf = new LookBackConnectorModel< ConnectionLabel< ConnectionT > >(
+        name + "_lbl", /*is_primary=*/true, /*has_delay=*/true );
+    register_connection_model_( cf );
+  }
+}
+
 /**
  * Register a synape with default Connector and without any common properties.
  */

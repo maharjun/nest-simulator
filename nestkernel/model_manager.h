@@ -31,6 +31,7 @@
 
 // Includes from nestkernel:
 #include "connector_model.h"
+#include "lookback_connector_model.h"
 #include "genericmodel.h"
 #include "genericmodel.h"
 #include "model.h"
@@ -181,6 +182,9 @@ public:
    */
   template < class ConnectionT >
   void register_connection_model( const std::string& name );
+
+  template < class ConnectionT >
+  void register_lookback_connection_model( const std::string& name );
 
   template < class ConnectionT >
   void register_secondary_connection_model( const std::string& name,

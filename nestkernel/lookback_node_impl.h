@@ -5,7 +5,6 @@
 
 #include "lookback_node.h"
 #include "lookback_exceptions.h"
-#include "target_identifier.h"
 
 #include "connection.h"
 #include "connector_model_impl.h"

@@ -118,6 +118,10 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
+protected:
+
+  void update( Time const&, const long, const long );
+
 private:
   friend class RecordablesMap< izhikevich >;
   friend class UniversalDataLogger< izhikevich >;
@@ -125,8 +129,6 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
-
-  void update( Time const&, const long, const long );
 
   // ----------------------------------------------------------------
 

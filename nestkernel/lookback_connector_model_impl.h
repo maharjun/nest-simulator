@@ -39,6 +39,9 @@ std::vector<ConnectionT *> LookBackConnectorModel<ConnectionT>::get_conn_ptrs(Co
     if (is_matching_syn_id(conn_base_in, syn_id)){
       return get_conn_ptrs_hom(conn_base_in);
     }
+    else {
+      return std::vector<ConnectionT *>();
+    }
   }
   else {
     // This is the case where the ConnectorBase is a heterogenous connector
@@ -92,7 +95,7 @@ void LookBackConnectorModel<ConnectionT>::update_conn_ptrs(const std::vector<Con
   // First, we check if the two vectors are identical i.e. there were no
   // reallocations. This is done by checking if they are either empty or have
   // identical first elements. This is sufficient because of 3. & 5.
-  if (!(old_conn_ptrs.empty() && new_conn_ptrs.empty()
+  if (!((old_conn_ptrs.empty() && new_conn_ptrs.empty())
         || old_conn_ptrs[0] == new_conn_ptrs[0])) {
 
     // in case they are not, we need to replace the relevant synapses across all
@@ -244,14 +247,14 @@ std::vector<ConnectionT *> LookBackConnectorModel<ConnectionT>::get_conn_ptrs_he
   // 1. conn_base_in is a validated pointer (i.e. with 2 LSB's 0)
   // 2. conn_base_in represents a heterogeneous connector
 
-  // Casting conn_base_in to HetConnector. Safe thanksto assumption 1
+  // Casting conn_base_in to HetConnector. Safe thanksto assumption 1, 2
   auto het_conn = static_cast<HetConnector*>(conn_base_in);
 
   // Finding the Homogenous connector with matching type
   vector_like<ConnectionT>* matching_hom_conn = NULL;
   for(size_t i=0; i < het_conn->size(); ++i) {
-    if (is_matching_syn_id(het_conn[i], syn_id)) {
-      matching_hom_conn = static_cast< vector_like<ConnectionT>* >(het_conn[i]);
+    if (is_matching_syn_id(het_conn->at(i), syn_id)) {
+      matching_hom_conn = static_cast< vector_like<ConnectionT>* >(het_conn->at(i));
       break;
     }
   }
