@@ -71,9 +71,12 @@ private:
   inline void replace_inc_synapse(ConnectionT* old_syn, ConnectionT* new_syn);
 
   /// `std::set` used to store the pointers to incoming synapses
-  std::set<ConnectionT*> incoming_syn_ptr_set;
+  std::set<ConnectionT*> incoming_syn_ptr_set_;
 
 public:
+
+  // const reference to the set for the purpose of accessing synapses
+  const std::set<ConnectionT*> &incoming_syn_ptr_set;
 
   /// \brief Virtual Destructor to make class contain vtable
   ///
@@ -91,13 +94,8 @@ public:
   // use)
   friend class LookBackConnectorModel<ConnectionT>;
 
-  LookBackNode() : incoming_syn_ptr_set() {}
+  LookBackNode() : incoming_syn_ptr_set_(), incoming_syn_ptr_set(incoming_syn_ptr_set_) {}
 
-  /// Get a `const_iterator` to the beginning of the set of incoming synapses
-  typename std::set<ConnectionT*>::const_iterator get_inc_syn_begin();
-
-  /// Get a `const_iterator` to the end of the set of incoming synapses
-  typename std::set<ConnectionT*>::const_iterator get_inc_syn_end();
 }; // of LookBackNode
 
 
