@@ -3,6 +3,7 @@
 
 #include "lookback_connector_model.h"
 #include "connector_model_impl.h"
+#include "lookback_node_impl.h"
 
 #include <vector>
 
@@ -16,12 +17,15 @@ template <typename ConnectionT>
 std::vector<ConnectionT *> LookBackConnectorModel<ConnectionT>::get_conn_ptrs(ConnectorBase *conn_base_in, index syn_id) {
   // This function makes the following assumptions:
   //
-  // 1.  The conn_base_in pointer the pointer that is passed into `this->add_connection()`
+  // 1.  The conn_base_in pointer is the pointer that is passed into `this->add_connection()`
   //     or the one returned from `this->GenericConnectorModel<ConnectionT>::add_connection()`
   //
   // 2.  The above basically imples that this is NOT a validated pointer and the LSB's
   //     still contain the information regarding has_primary and has_secondary (see the
   //     functions validate_pointer(), has_primary(), and has_secondary() in connector_model.h
+  //
+  // 3.  Also, since the conn_base_in can be NULL as a result of there being no connection from
+  //     the given source neuron, this case is taken care of.
   //
   // The following points regarding the structure of a ConnectorBase have been kept in
   // mind while designing
@@ -34,23 +38,30 @@ std::vector<ConnectionT *> LookBackConnectorModel<ConnectionT>::get_conn_ptrs(Co
   // Extract information from 2 LSBs
   conn_base_in = validate_pointer(conn_base_in);
 
-  if (conn_base_in->homogeneous_model()) {
-    // This is the case where the ConnectorBase is a homogenous connector
-    if (is_matching_syn_id(conn_base_in, syn_id)){
-      return get_conn_ptrs_hom(conn_base_in);
+  if (conn_base_in) {
+    // in case there is a connector_base
+    if (conn_base_in->homogeneous_model()) {
+      // This is the case where the ConnectorBase is a homogenous connector
+      if (is_matching_syn_id(conn_base_in, syn_id)){
+        return get_conn_ptrs_hom(conn_base_in);
+      }
+      else {
+        return std::vector<ConnectionT *>();
+      }
     }
     else {
-      return std::vector<ConnectionT *>();
+      // This is the case where the ConnectorBase is a heterogenous connector
+
+      // Note that the synid passed to this function represents the type of
+      // the synapse inserted in add_connection, which is expected to refer to
+      // the type of LookBackConnectorModel<ConnectionT>
+
+      return get_conn_ptrs_het(conn_base_in, syn_id);
     }
   }
   else {
-    // This is the case where the ConnectorBase is a heterogenous connector
-
-    // Note that the synid passed to this function represents the type of
-    // the synapse inserted in add_connection, which is expected to refer to
-    // the type of LookBackConnectorModel<ConnectionT>
-
-    return get_conn_ptrs_het(conn_base_in, syn_id);
+    // in case there is no connection of the source node
+    return std::vector<ConnectionT *>();
   }
 }
 
@@ -93,10 +104,9 @@ void LookBackConnectorModel<ConnectionT>::update_conn_ptrs(const std::vector<Con
   assert (old_conn_ptrs.size() + 1 == new_conn_ptrs.size());
 
   // First, we check if the two vectors are identical i.e. there were no
-  // reallocations. This is done by checking if they are either empty or have
-  // identical first elements. This is sufficient because of 3. & 5.
-  if (!((old_conn_ptrs.empty() && new_conn_ptrs.empty())
-        || old_conn_ptrs[0] == new_conn_ptrs[0])) {
+  // reallocations. This is done by checking if old_conn_ptrs is empty or they
+  // have identical first elements. This is sufficient because of 3. 4. & 5.
+  if (!(old_conn_ptrs.empty() || old_conn_ptrs[0] == new_conn_ptrs[0])) {
 
     // in case they are not, we need to replace the relevant synapses across all
     // the neurons to whom these synapses point. As far as thread safety goes, there
@@ -104,14 +114,14 @@ void LookBackConnectorModel<ConnectionT>::update_conn_ptrs(const std::vector<Con
     // all the connections on a single connector (assum 2.) point only to neurons
     // that are accessed on the same thread as the current one.
 
-    for (auto old_iter=old_conn_ptrs.begin(), new_iter=new_conn_ptrs.end();
+    for (auto old_iter=old_conn_ptrs.begin(), new_iter=new_conn_ptrs.begin();
          old_iter != old_conn_ptrs.end();
          ++old_iter, ++new_iter) {
 
       // It is assumed that this will work. assump 1. implies that all pointers here
       // are connected using LookBackConnectorModel. This means that their target is
       // already validated to have inherited from LookBackNode<ConnectionT>.
-      auto target_node = reinterpret_cast< LookBackNode<ConnectionT>* >(
+      auto target_node = dynamic_cast< LookBackNode<ConnectionT>* >(
           // Get the Target (Node*) of the connection that is pointed to by the (element
           // that is pointed to by new_iter)
           (*new_iter)->get_target(kernel().vp_manager.get_thread_id())
@@ -124,7 +134,7 @@ void LookBackConnectorModel<ConnectionT>::update_conn_ptrs(const std::vector<Con
   // Now, having assumed that the last element of new_conn_ptrs is the new connection, we
   // will perform the relevant addition to the set (note assump 6. for reinterpret_cast)
 
-  auto val_target_node = reinterpret_cast< LookBackNode<ConnectionT>* >(
+  auto val_target_node = dynamic_cast< LookBackNode<ConnectionT>* >(
       // Get the Target of the connection that is pointed to by the last
       // element of new_conn_ptrs
       new_conn_ptrs.back()->get_target(kernel().vp_manager.get_thread_id())
@@ -267,6 +277,11 @@ std::vector<ConnectionT *> LookBackConnectorModel<ConnectionT>::get_conn_ptrs_he
   else {
     return std::vector<ConnectionT *>();
   }
+}
+
+template <typename ConnectionT>
+ConnectorModel *LookBackConnectorModel<ConnectionT>::clone(std::string name) const {
+  return new LookBackConnectorModel<ConnectionT>( *this, name );
 }
 
 }

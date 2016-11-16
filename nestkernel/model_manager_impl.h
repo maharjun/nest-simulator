@@ -32,7 +32,7 @@
 // Includes from nestkernel:
 #include "connection_label.h"
 #include "kernel_manager.h"
-
+#include "lookback_connector_model_impl.h"
 
 namespace nest
 {

@@ -47,6 +47,9 @@ public:
                                  DictionaryDatum& d,
                                  double delay,
                                  double weight );
+
+  ConnectorModel* clone(std::string name) const;
+
 };
 
 }

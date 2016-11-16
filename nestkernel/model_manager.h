@@ -31,8 +31,6 @@
 
 // Includes from nestkernel:
 #include "connector_model.h"
-#include "lookback_connector_model.h"
-#include "genericmodel.h"
 #include "genericmodel.h"
 #include "model.h"
 #include "nest_time.h"
