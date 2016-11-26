@@ -367,6 +367,43 @@ SpikeEvent::get_multiplicity() const
   return multiplicity_;
 }
 
+/**
+ * Event to convey to a neuron that its time to perform
+ * normalization
+ */
+class NormEvent : public Event {
+public:
+
+  NormEvent() : Event(), instruction_(0) {}
+
+  inline NormEvent *clone() const;
+
+  virtual void operator()();
+
+  inline long get_instruction();
+  inline void set_instruction(long instruction_in);
+
+private:
+  /**
+   * This is an unsigned long representing an instruction index.
+   * How this is interpreted by the receiver is upto the receiver.
+   * By default, this is 0
+   */
+  long instruction_;
+
+};
+
+NormEvent* NormEvent::clone() const {
+  return new NormEvent(*this);
+}
+
+long NormEvent::get_instruction() {
+  return instruction_;
+}
+
+void NormEvent::set_instruction(long instruction_in) {
+  instruction_ = instruction_in;
+}
 
 /**
  * Event for recording the weight of a spike.

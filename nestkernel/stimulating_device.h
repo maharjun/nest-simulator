@@ -197,6 +197,15 @@ StimulatingDevice< nest::SpikeEvent >::is_active( const Time& T ) const
   return get_t_min_() < stamp && stamp <= get_t_max_();
 }
 
+template <>
+inline bool
+StimulatingDevice< nest::NormEvent >::is_active( const Time& T ) const
+{
+  /* Input is the time stamp of the spike to be emitted. */
+  const long stamp = T.get_steps();
+  return get_t_min_() < stamp && stamp <= get_t_max_();
+}
+
 template < typename EmittedEvent >
 inline void
 StimulatingDevice< EmittedEvent >::get_status( DictionaryDatum& d ) const

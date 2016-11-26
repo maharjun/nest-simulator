@@ -55,6 +55,10 @@ void SpikeEvent::operator()()
   receiver_->handle( *this );
 }
 
+void nest::NormEvent::operator()() {
+  receiver_->handle( *this );
+}
+
 void WeightRecorderEvent::operator()()
 {
   receiver_->handle( *this );

@@ -83,6 +83,7 @@
 #include "gamma_sup_generator.h"
 #include "mip_generator.h"
 #include "noise_generator.h"
+#include "norm_controller.h"
 #include "poisson_generator.h"
 #include "ppd_sup_generator.h"
 #include "pulsepacket_generator.h"
@@ -207,6 +208,8 @@ ModelsModule::init( SLIInterpreter* )
     "pulsepacket_generator" );
   kernel().model_manager.register_node_model< noise_generator >(
     "noise_generator" );
+  kernel().model_manager.register_node_model< norm_controller >(
+    "norm_controller" );
   kernel().model_manager.register_node_model< step_current_generator >(
     "step_current_generator" );
   kernel().model_manager.register_node_model< mip_generator >(

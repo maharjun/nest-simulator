@@ -132,6 +132,11 @@ public:
       return invalid_port_;
     }
     port
+    handles_test_event( NormEvent&, rport )
+    {
+      return invalid_port_;
+    }
+    port
     handles_test_event( DSSpikeEvent&, rport )
     {
       return invalid_port_;
