@@ -32,12 +32,18 @@ class norm_controller: public Node {
    */
   long norm_instruction;
 
+  /**
+   * This is the boolean flag that controls whether or not the norm_controller
+   * will bother sending events
+   */
+  bool is_active;
 public:
 
   norm_controller():
       Node(),
       current_norm_instant_ind_(0),
-      norm_instruction(0) {}
+      norm_instruction(0),
+      is_active(true) {}
 
   port send_test_event( Node&, rport, synindex, bool );
 

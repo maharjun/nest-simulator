@@ -24,14 +24,15 @@ void nest::norm_controller::calibrate() {
 
 void nest::norm_controller::update(const Time &origin, const long from, const long to) {
 
-  while (current_norm_instant_ind_ < norm_instants_.size() && origin.get_steps() + to > norm_instants_[current_norm_instant_ind_]) {
-//    std::cout << "Generating Norm Event" << std::endl;
-    long eventlag = norm_instants_[current_norm_instant_ind_] - origin.get_steps();
-    NormEvent ne;
-    ne.set_instruction(norm_instruction);
-    kernel().event_delivery_manager.send( *this, ne, eventlag);
+  if(is_active) {
+    while (current_norm_instant_ind_ < (long)norm_instants_.size() && origin.get_steps() + to > norm_instants_[current_norm_instant_ind_]) {
+      long eventlag = norm_instants_[current_norm_instant_ind_] - origin.get_steps();
+      NormEvent ne;
+      ne.set_instruction(norm_instruction);
+      kernel().event_delivery_manager.send( *this, ne, eventlag);
 
-    current_norm_instant_ind_++;
+      current_norm_instant_ind_++;
+    }
   }
 }
 
@@ -45,14 +46,23 @@ bool nest::norm_controller::local_receiver() const {
 
 void nest::norm_controller::set_status(const DictionaryDatum &datum) {
 
+  // update is_active
+  bool new_is_active=is_active;
+  updateValue< bool >(datum, "is_active", new_is_active);
+
   // Creating Backup of norm_instants_
   std::vector<long> norm_instants_tmp_;
   norm_instants_.swap(norm_instants_tmp_);
 
   // Retrieving vector from Python
   std::vector<double> norm_instants_in_ms;
-  updateValue< std::vector<double> >(datum, "norm_instants", norm_instants_in_ms);
+  bool is_norm_instants_set = updateValue< std::vector<double> >(datum, "norm_instants", norm_instants_in_ms);
 
+  if (!new_is_active && is_norm_instants_set) {
+    LOG(M_WARNING,
+        "norm_controller::set_status",
+        "You are setting the normalization instants of a norm_controller that is not active");
+  }
   // Filling norm_instants
   norm_instants_.resize(norm_instants_in_ms.size());
   for(unsigned long i = 0; i < norm_instants_in_ms.size(); ++i) {
@@ -72,12 +82,8 @@ void nest::norm_controller::set_status(const DictionaryDatum &datum) {
     throw E;
   }
 
+  is_active = new_is_active;
   updateValue<long>(datum, "norm_instr", norm_instruction);
-
-  std::string missed;
-  if(!datum->all_accessed(missed)) {
-    throw UnaccessedDictionaryEntry( missed );
-  }
 }
 
 void nest::norm_controller::get_status(DictionaryDatum &datum) const {
@@ -89,11 +95,8 @@ void nest::norm_controller::get_status(DictionaryDatum &datum) const {
   }
 
   def< std::vector<double> >(datum, "norm_instants", norm_instants_in_ms);
-
-  std::string missed;
-  if(!datum->all_accessed(missed)) {
-    throw UnaccessedDictionaryEntry( missed );
-  }
+  def< long >(datum, "norm_instruction", norm_instruction);
+  def< bool >(datum, "is_active", is_active);
 }
 
 void nest::norm_controller::init_state_(const Node &node) {
@@ -104,6 +107,7 @@ void nest::norm_controller::init_state_(const Node &node) {
   norm_controller proto = downcast< norm_controller >(node);
   norm_instants_ = proto.norm_instants_;
   norm_instruction = proto.norm_instruction;
+  is_active = proto.is_active;
   current_norm_instant_ind_ = 0;
 }
 
