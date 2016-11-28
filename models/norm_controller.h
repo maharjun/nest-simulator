@@ -15,26 +15,27 @@ namespace nest {
 class norm_controller: public Node {
 
   /**
-   * This is the vector of ntime instants where a normalization event needs
+   * This is the vector of time instants where a normalization event needs
    * to be triggered
    */
   std::vector<long> norm_instants_;
 
   /**
    * This is the index of the element in norm_instants which will
-   * be the next time to trigger a normalization event
+   * be the next time to trigger a normalization event. This is a
+   * state variable that is initialized during calibrate()
    */
   long current_norm_instant_ind_;
 
   /**
    * This is the value assigned to the instruction parameter of the
-   * normalization event that is generated
+   * normalization event that is generated : default 1
    */
   long norm_instruction;
 
   /**
    * This is the boolean flag that controls whether or not the norm_controller
-   * will bother sending events
+   * will bother sending events: default true
    */
   bool is_active;
 public:
@@ -42,7 +43,7 @@ public:
   norm_controller():
       Node(),
       current_norm_instant_ind_(0),
-      norm_instruction(0),
+      norm_instruction(1),
       is_active(true) {}
 
   port send_test_event( Node&, rport, synindex, bool );
@@ -75,6 +76,7 @@ norm_controller::send_test_event( Node& target,
                                synindex syn_id,
                                bool )
 {
+  // This line is copied from poisson generator
   device_.enforce_single_syn_type( syn_id );
 
   NormEvent e;

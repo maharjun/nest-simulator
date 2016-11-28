@@ -95,7 +95,7 @@ void nest::norm_controller::get_status(DictionaryDatum &datum) const {
   }
 
   def< std::vector<double> >(datum, "norm_instants", norm_instants_in_ms);
-  def< long >(datum, "norm_instruction", norm_instruction);
+  def< long >(datum, "norm_instr", norm_instruction);
   def< bool >(datum, "is_active", is_active);
 }
 
