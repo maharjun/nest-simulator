@@ -23,7 +23,7 @@ set( nestkernel_sources
     recordables_map.h
     archiving_node.h archiving_node.cpp
     lookback_connector_model.h lookback_connector_model_impl.h
-    lookback_node_impl.h lookback_node.h
+    lookback_node.h
     lookback_exceptions.h lookback_exceptions.cpp
     common_synapse_properties.h common_synapse_properties.cpp
     sibling_container.h sibling_container.cpp
