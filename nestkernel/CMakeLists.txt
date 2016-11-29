@@ -1,30 +1,26 @@
 # nestkernel/CMakeLists.txt
-# 
+#
 # This file is part of NEST.
-# 
+#
 # Copyright (C) 2004 The NEST Initiative
-# 
+#
 # NEST is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # NEST is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 set( nestkernel_sources
-#    rand.cpp
     universal_data_logger_impl.h universal_data_logger.h
     recordables_map.h
     archiving_node.h archiving_node.cpp
-    lookback_connector_model.h lookback_connector_model_impl.h
-    lookback_node.h
-    lookback_exceptions.h lookback_exceptions.cpp
     common_synapse_properties.h common_synapse_properties.cpp
     sibling_container.h sibling_container.cpp
     subnet.h subnet.cpp
@@ -86,6 +82,11 @@ set( nestkernel_sources
     node_manager.h node_manager.cpp
     logging_manager.h logging_manager.cpp
     manager_interface.h
+
+    # Files related to lookback
+    lookback_connector_model.h lookback_connector_model_impl.h
+    lookback_node.h
+    lookback_exceptions.h lookback_exceptions.cpp
     )
 
 add_library( nestkernel ${nestkernel_sources} )
