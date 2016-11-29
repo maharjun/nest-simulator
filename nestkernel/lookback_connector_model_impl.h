@@ -3,7 +3,6 @@
 
 #include "lookback_connector_model.h"
 #include "connector_model_impl.h"
-#include "lookback_node_impl.h"
 
 #include <vector>
 
