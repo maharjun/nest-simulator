@@ -14,8 +14,9 @@ class LookBackConnectorModel : public GenericConnectorModel<ConnectionT> {
 public:
   LookBackConnectorModel( const std::string name,
                           bool is_primary,
-                          bool has_delay )
-      : GenericConnectorModel<ConnectionT>( name, is_primary, has_delay, /*requires_symmetric=*/false )
+                          bool has_delay,
+                          bool requires_symmetric)
+      : GenericConnectorModel<ConnectionT>( name, is_primary, has_delay, requires_symmetric=requires_symmetric)
   {
   }
 
